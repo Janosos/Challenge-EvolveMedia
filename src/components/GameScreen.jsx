@@ -12,7 +12,7 @@ const ICONS = [
   { value: 'comet', icon: <img src={`${basePath}assets/comet.svg`} alt="comet" width="40" height="40" /> }
 ];
 
-const INITIAL_TIME = 30;
+// INITIAL_TIME is now calculated dynamically based on level
 
 const generateDeck = () => {
   const deck = [...ICONS, ...ICONS].map((item, index) => ({
@@ -24,11 +24,12 @@ const generateDeck = () => {
   return deck.sort(() => Math.random() - 0.5);
 };
 
-const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
+const GameScreen = ({ onGameOver, isMuted, onToggleMute, level }) => {
+  const initialTime = Math.max(10, 30 - (level - 1) * 5);
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchesFound, setMatchesFound] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
+  const [timeLeft, setTimeLeft] = useState(initialTime);
   const [moves, setMoves] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
 
@@ -139,6 +140,9 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
   return (
     <div className="screen-container">
       <div className="game-header">
+        <div className="timer bg-primary text-white">
+          Level {level}
+        </div>
         <div className={`timer ${timeLeft <= 10 ? 'urgent' : ''}`}>
           {timeLeft}s
         </div>
