@@ -1,7 +1,9 @@
+const basePath = import.meta.env.BASE_URL;
+
 const sounds = {
-  match: new Audio('/assets/correct.mp3'),
-  mismatch: new Audio('/assets/incorrect.mp3'),
-  tick: new Audio('/assets/ticking.mp3')
+  match: new Audio(`${basePath}assets/correct.mp3`),
+  mismatch: new Audio(`${basePath}assets/incorrect.mp3`),
+  tick: new Audio(`${basePath}assets/ticking.mp3`)
 };
 
 export const playSound = (type, isMuted) => {
@@ -21,7 +23,7 @@ export const playBackground = (isMuted) => {
   }
   
   if (!bgAudio) {
-    bgAudio = new Audio('/assets/background.mp3');
+    bgAudio = new Audio(`${basePath}assets/background.mp3`);
     bgAudio.loop = true;
     bgAudio.volume = 0.2;
   }

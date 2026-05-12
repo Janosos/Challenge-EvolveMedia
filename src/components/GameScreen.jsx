@@ -3,11 +3,13 @@ import { Modal } from 'react-bootstrap';
 import Card from './Card';
 import { playSound, playBackground } from '../utils/audio';
 
+const basePath = import.meta.env.BASE_URL;
+
 const ICONS = [
-  { value: 'star', icon: <img src="/assets/star.svg" alt="star" width="40" height="40" /> },
-  { value: 'moon', icon: <img src="/assets/moon.svg" alt="moon" width="40" height="40" /> },
-  { value: 'sun', icon: <img src="/assets/sun.svg" alt="sun" width="40" height="40" /> },
-  { value: 'comet', icon: <img src="/assets/comet.svg" alt="comet" width="40" height="40" /> }
+  { value: 'star', icon: <img src={`${basePath}assets/star.svg`} alt="star" width="40" height="40" /> },
+  { value: 'moon', icon: <img src={`${basePath}assets/moon.svg`} alt="moon" width="40" height="40" /> },
+  { value: 'sun', icon: <img src={`${basePath}assets/sun.svg`} alt="sun" width="40" height="40" /> },
+  { value: 'comet', icon: <img src={`${basePath}assets/comet.svg`} alt="comet" width="40" height="40" /> }
 ];
 
 const INITIAL_TIME = 30;
@@ -135,7 +137,7 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
           {timeLeft}s
         </div>
         <button className="btn glass-btn rounded-circle p-2" onClick={onToggleMute}>
-          {isMuted ? <img src="/assets/sound--off.svg" alt="Muted" width="24" height="24" /> : <img src="/assets/sound--on.svg" alt="Unmuted" width="24" height="24" />}
+          {isMuted ? <img src={`${basePath}assets/sound--off.svg`} alt="Muted" width="24" height="24" /> : <img src={`${basePath}assets/sound--on.svg`} alt="Unmuted" width="24" height="24" />}
         </button>
       </div>
 
