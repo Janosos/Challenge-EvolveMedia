@@ -29,6 +29,7 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchesFound, setMatchesFound] = useState(0);
   const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
+  const [moves, setMoves] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
 
   const [modalState, setModalState] = useState({ show: false, message: '', type: '' });
@@ -58,18 +59,22 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
     return () => clearInterval(timer);
   }, [matchesFound, timeLeft <= 0]); // only reset interval when game over state changes
 
-  // Handle game over logic and tick sounds
+  // Handle tick sounds
   useEffect(() => {
     if (timeLeft <= 10 && timeLeft > 0 && matchesFound < 4) {
       playSound('tick', isMutedRef.current);
     }
+  }, [timeLeft, matchesFound]);
+
+  // Handle game over logic
+  useEffect(() => {
     if (timeLeft <= 0 && matchesFound < 4) {
-      onGameOver(false); // lose
+      onGameOver(false, moves); // lose
     }
     if (matchesFound === 4) {
-      onGameOver(true); // win
+      onGameOver(true, moves); // win
     }
-  }, [timeLeft, matchesFound, onGameOver]);
+  }, [timeLeft, matchesFound, onGameOver, moves]);
 
   const handleCardClick = (clickedCard) => {
     if (isChecking) return;
@@ -92,6 +97,7 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
 
   useEffect(() => {
     if (flippedCards.length === 2) {
+      setMoves(prev => prev + 1);
       const [first, second] = flippedCards;
 
       if (first.value === second.value) {
@@ -135,6 +141,9 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
       <div className="game-header">
         <div className={`timer ${timeLeft <= 10 ? 'urgent' : ''}`}>
           {timeLeft}s
+        </div>
+        <div className="timer bg-dark text-white opacity-75">
+          Moves: {moves}
         </div>
         <button className="btn glass-btn rounded-circle p-2" onClick={onToggleMute}>
           {isMuted ? <img src={`${basePath}assets/sound--off.svg`} alt="Muted" width="24" height="24" /> : <img src={`${basePath}assets/sound--on.svg`} alt="Unmuted" width="24" height="24" />}

@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Trophy, Frown } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const ResolveScreen = ({ isWin, onPlayAgain }) => {
+const ResolveScreen = ({ isWin, onPlayAgain, moves, level }) => {
   useEffect(() => {
     if (isWin) {
       const duration = 3 * 1000;
@@ -40,12 +40,14 @@ const ResolveScreen = ({ isWin, onPlayAgain }) => {
         {isWin ? (
           <>
             <Trophy size={100} className="mb-3 text-warning" />
-            <h1 className="display-4 fw-bold text-white">You did it!</h1>
+            <h1 className="display-4 fw-bold text-white">Level {level - 1} Cleared!</h1>
+            <p className="lead text-white-50 fs-4 mt-2">Completed in <span className="fw-bold text-warning">{moves}</span> moves</p>
           </>
         ) : (
           <>
             <Frown size={100} className="mb-3 text-white-50" />
-            <h1 className="display-4 fw-bold text-white">Oops, you didn't find them all</h1>
+            <h1 className="display-4 fw-bold text-white">Time's Up!</h1>
+            <p className="lead text-white-50 fs-4 mt-2">You made <span className="fw-bold">{moves}</span> moves</p>
           </>
         )}
       </div>
