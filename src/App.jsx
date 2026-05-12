@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import StartScreen from './components/StartScreen';
 import GameScreen from './components/GameScreen';
 import ResolveScreen from './components/ResolveScreen';
+import CursorTrail from './components/CursorTrail';
 import './App.css'; // Vite default, but we mostly use index.css
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
 
   return (
     <div className="App d-flex flex-column min-vh-100">
+      <CursorTrail />
       {currentScreen === 'start' && (
         <StartScreen onStart={handleStart} />
       )}
