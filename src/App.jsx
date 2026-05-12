@@ -24,13 +24,16 @@ function App() {
       setLevel(prev => prev + 1);
       setNextLevelTime(timeLeftAtEnd + 10);
     } else {
-      setLevel(1);
+      // Keep current level for the ResolveScreen to show "max level reached"
       setNextLevelTime(30);
     }
     setCurrentScreen('resolve');
   };
 
   const handlePlayAgain = () => {
+    if (!isWin) {
+      setLevel(1); // Reset level only when starting a new game after a loss
+    }
     setCurrentScreen('game');
   };
 

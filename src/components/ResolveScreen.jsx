@@ -48,7 +48,8 @@ const ResolveScreen = ({ isWin, onPlayAgain, moves, level }) => {
           <>
             <Frown size={100} className="mb-3 text-white-50" />
             <h1 className="display-4 fw-bold text-white">Time's Up!</h1>
-            <p className="lead text-white-50 fs-4 mt-2">You made <span className="fw-bold">{moves}</span> moves</p>
+            <p className="lead text-white-50 fs-4 mt-2">You reached <span className="fw-bold text-primary">Level {level}</span></p>
+            <p className="lead text-white-50 fs-4 mt-1">and made <span className="fw-bold">{moves}</span> moves</p>
           </>
         )}
       </div>
