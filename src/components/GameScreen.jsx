@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-bootstrap';
-import { Volume2, VolumeX, Star, Moon, Sun, Flame } from 'lucide-react';
 import Card from './Card';
 import { playSound, playBackground } from '../utils/audio';
 
 const ICONS = [
-  { value: 'star', icon: <Star size={40} /> },
-  { value: 'moon', icon: <Moon size={40} /> },
-  { value: 'sun', icon: <Sun size={40} /> },
-  { value: 'comet', icon: <Flame size={40} /> }
+  { value: 'star', icon: <img src="/assets/star.svg" alt="star" width="40" height="40" /> },
+  { value: 'moon', icon: <img src="/assets/moon.svg" alt="moon" width="40" height="40" /> },
+  { value: 'sun', icon: <img src="/assets/sun.svg" alt="sun" width="40" height="40" /> },
+  { value: 'comet', icon: <img src="/assets/comet.svg" alt="comet" width="40" height="40" /> }
 ];
 
 const INITIAL_TIME = 30;
@@ -31,6 +30,12 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
   const [isChecking, setIsChecking] = useState(false);
 
   const [modalState, setModalState] = useState({ show: false, message: '', type: '' });
+  
+  const isMutedRef = useRef(isMuted);
+
+  useEffect(() => {
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
 
   useEffect(() => {
     setCards(generateDeck());
@@ -40,45 +45,51 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
     playBackground(isMuted);
   }, [isMuted]);
 
+  // Handle timer countdown
   useEffect(() => {
-    if (timeLeft <= 0) {
-      onGameOver(false); // lose
-      return;
-    }
-
-    if (matchesFound === 4) {
-      onGameOver(true); // win
-      return;
-    }
+    if (matchesFound === 4 || timeLeft <= 0) return;
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        const next = prev - 1;
-        if (next <= 10 && next > 0) {
-          playSound('tick', isMuted);
-        }
-        return next;
-      });
+      setTimeLeft(prev => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, matchesFound, onGameOver, isMuted]);
+  }, [matchesFound, timeLeft <= 0]); // only reset interval when game over state changes
+
+  // Handle game over logic and tick sounds
+  useEffect(() => {
+    if (timeLeft <= 10 && timeLeft > 0 && matchesFound < 4) {
+      playSound('tick', isMutedRef.current);
+    }
+    if (timeLeft <= 0 && matchesFound < 4) {
+      onGameOver(false); // lose
+    }
+    if (matchesFound === 4) {
+      onGameOver(true); // win
+    }
+  }, [timeLeft, matchesFound, onGameOver]);
 
   const handleCardClick = (clickedCard) => {
     if (isChecking) return;
 
+    // Prevent clicking the same card twice rapidly or clicking a 3rd card
+    if (flippedCards.length >= 2 || flippedCards.some(c => c.id === clickedCard.id)) return;
 
+    setFlippedCards(prev => {
+      const newFlipped = [...prev, clickedCard];
+      if (newFlipped.length === 2) {
+        setIsChecking(true);
+      }
+      return newFlipped;
+    });
 
     setCards(prev => prev.map(card =>
       card.id === clickedCard.id ? { ...card, isFlipped: true } : card
     ));
-
-    setFlippedCards(prev => [...prev, clickedCard]);
   };
 
   useEffect(() => {
     if (flippedCards.length === 2) {
-      setIsChecking(true);
       const [first, second] = flippedCards;
 
       if (first.value === second.value) {
@@ -91,7 +102,7 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
           setFlippedCards([]);
           setIsChecking(false);
 
-          playSound('match', isMuted);
+          playSound('match', isMutedRef.current);
           showModal('Nice! It\'s a match', 'success');
         }, 500);
       } else {
@@ -103,12 +114,12 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
           setFlippedCards([]);
           setIsChecking(false);
 
-          playSound('mismatch', isMuted);
+          playSound('mismatch', isMutedRef.current);
           showModal('Sorry, but this is not a match', 'danger');
         }, 1000);
       }
     }
-  }, [flippedCards, isMuted]);
+  }, [flippedCards]); // Removed isMuted to prevent rogue re-triggering
 
   const showModal = (message, type) => {
     setModalState({ show: true, message, type });
@@ -124,7 +135,7 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute }) => {
           {timeLeft}s
         </div>
         <button className="btn glass-btn rounded-circle p-2" onClick={onToggleMute}>
-          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+          {isMuted ? <img src="/assets/sound--off.svg" alt="Muted" width="24" height="24" /> : <img src="/assets/sound--on.svg" alt="Unmuted" width="24" height="24" />}
         </button>
       </div>
 
