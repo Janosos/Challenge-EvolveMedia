@@ -10,19 +10,22 @@ function App() {
   const [isWin, setIsWin] = useState(false);
   const [finalMoves, setFinalMoves] = useState(0);
   const [level, setLevel] = useState(1);
+  const [nextLevelTime, setNextLevelTime] = useState(30);
   const [isMuted, setIsMuted] = useState(true); // Start muted by default for browser policy
 
   const handleStart = () => {
     setCurrentScreen('game');
   };
 
-  const handleGameOver = (winStatus, moves) => {
+  const handleGameOver = (winStatus, moves, timeLeftAtEnd) => {
     setIsWin(winStatus);
     setFinalMoves(moves);
     if (winStatus) {
       setLevel(prev => prev + 1);
+      setNextLevelTime(timeLeftAtEnd + 10);
     } else {
       setLevel(1);
+      setNextLevelTime(30);
     }
     setCurrentScreen('resolve');
   };
@@ -45,6 +48,7 @@ function App() {
       {currentScreen === 'game' && (
         <GameScreen 
           level={level}
+          initialTime={nextLevelTime}
           onGameOver={handleGameOver} 
           isMuted={isMuted} 
           onToggleMute={toggleMute} 

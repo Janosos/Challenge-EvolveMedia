@@ -24,8 +24,7 @@ const generateDeck = () => {
   return deck.sort(() => Math.random() - 0.5);
 };
 
-const GameScreen = ({ onGameOver, isMuted, onToggleMute, level }) => {
-  const initialTime = Math.max(10, 30 - (level - 1) * 5);
+const GameScreen = ({ onGameOver, isMuted, onToggleMute, level, initialTime }) => {
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchesFound, setMatchesFound] = useState(0);
@@ -70,10 +69,10 @@ const GameScreen = ({ onGameOver, isMuted, onToggleMute, level }) => {
   // Handle game over logic
   useEffect(() => {
     if (timeLeft <= 0 && matchesFound < 4) {
-      onGameOver(false, moves); // lose
+      onGameOver(false, moves, 0); // lose
     }
     if (matchesFound === 4) {
-      onGameOver(true, moves); // win
+      onGameOver(true, moves, timeLeft); // win
     }
   }, [timeLeft, matchesFound, onGameOver, moves]);
 

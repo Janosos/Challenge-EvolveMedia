@@ -42,6 +42,7 @@ const ResolveScreen = ({ isWin, onPlayAgain, moves, level }) => {
             <Trophy size={100} className="mb-3 text-warning" />
             <h1 className="display-4 fw-bold text-white">Level {level - 1} Cleared!</h1>
             <p className="lead text-white-50 fs-4 mt-2">Completed in <span className="fw-bold text-warning">{moves}</span> moves</p>
+            <p className="text-success fw-bold fs-5 mt-3">+10 Seconds added for the next level!</p>
           </>
         ) : (
           <>
@@ -59,7 +60,7 @@ const ResolveScreen = ({ isWin, onPlayAgain, moves, level }) => {
           className="hover-bounce px-5 py-3 fw-bold rounded-pill text-primary"
           onClick={onPlayAgain}
         >
-          PLAY AGAIN
+          {isWin ? "NEXT LEVEL" : "PLAY AGAIN"}
         </Button>
       </div>
     </div>
